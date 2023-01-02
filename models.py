@@ -39,7 +39,6 @@ class NearEarthObject:
         :param diameter: The NEO’s diameter.
         :param name: The NEO’s IAU name.
         """
-
         self.designation = designation
 
         if hazardous.upper() == 'Y':
@@ -70,7 +69,7 @@ class NearEarthObject:
             return f"{self.designation}"
 
     def __str__(self):
-        """produces a human-readable description of the contents of the object"""
+        """Produce a human-readable description of the contents of the object."""
         if self.hazardous:
             return f"{self.fullname} has a diameter of {self.diameter} km and is potentially hazardous."
         else:
@@ -105,7 +104,7 @@ class CloseApproach:
         :param designation: The NEO’s primary designation before the Approach is linked to its NEO via class NEODatabase in database.py.
         """
         self._designation = designation
-        self.time = cd_to_datetime(time) # TODO: Use the cd_to_datetime function for this attribute.
+        self.time = cd_to_datetime(time)
         self.distance = float(distance)
         self.velocity = float(velocity)
 
@@ -130,7 +129,7 @@ class CloseApproach:
         return datetime_to_str(self.time)
 
     def __str__(self):
-        """produces a human-readable description of the contents of the object"""
+        """Produce a human-readable description of the contents of the object."""
         return f"On {self.time_str} {self._designation} approaches Earth at a distance of {self.distance} au and a velocity of {self.velocity} km/s."
 
     def __repr__(self):

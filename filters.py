@@ -36,6 +36,7 @@ class AttributeFilter:
     Concrete subclasses can override the `get` classmethod to provide custom
     behavior to fetch a desired attribute from the given `CloseApproach`.
     """
+
     def __init__(self, op, value):
         """Construct a new `AttributeFilter` from an binary predicate and a reference value.
 
@@ -67,36 +68,47 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Return `repr(self)`, a computer-readable string representation of this object."""
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 class FilDist(AttributeFilter):
-    """Class for filtering by distance"""
+    """Class for filtering by distance."""
+
     @classmethod
     def get(cls, approach):
+        """Get distance."""
         return approach.distance
 
 class FilVel(AttributeFilter):
-    """Class for filtering by velocity"""
+    """Class for filtering by velocity."""
+
     @classmethod
     def get(cls, approach):
+        """Get velocity."""
         return approach.velocity
 
 class FilDia(AttributeFilter):
-    """Class for filtering by diameter"""
+    """Class for filtering by diameter."""
+
     @classmethod
     def get(cls, approach):
+        """Get diameter."""
         return approach.neo.diameter
 
 class FilHaz(AttributeFilter):
-    """Class for filtering by potential hazardous"""
+    """Class for filtering by potential hazardous."""
+
     @classmethod
     def get(cls, approach):
+        """Get if hazardous or not."""
         return approach.neo.hazardous
 
 class FilTime(AttributeFilter):
-    """Class for filtering by time"""
+    """Class for filtering by time."""
+
     @classmethod
     def get(cls, approach):
+        """Get time."""
         return approach.time.date()
 
 def create_filters(
