@@ -13,15 +13,13 @@ the supplied `CloseApproach`.
 
 The `limit` function simply limits the maximum number of values produced by an
 iterator.
-
-You'll edit this file in Tasks 3a and 3c.
 """
-import operator
 
+import operator
+import itertools
 
 class UnsupportedCriterionError(NotImplementedError):
     """A filter criterion is unsupported."""
-
 
 class AttributeFilter:
     """A general superclass for filters on comparable attributes.
@@ -71,6 +69,35 @@ class AttributeFilter:
     def __repr__(self):
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
+class FilDist(AttributeFilter):
+    """Class for filtering by distance"""
+    @classmethod
+    def get(cls, approach):
+        return approach.distance
+
+class FilVel(AttributeFilter):
+    """Class for filtering by velocity"""
+    @classmethod
+    def get(cls, approach):
+        return approach.velocity
+
+class FilDia(AttributeFilter):
+    """Class for filtering by diameter"""
+    @classmethod
+    def get(cls, approach):
+        return approach.neo.diameter
+
+class FilHaz(AttributeFilter):
+    """Class for filtering by potential hazardous"""
+    @classmethod
+    def get(cls, approach):
+        return approach.neo.hazardous
+
+class FilTime(AttributeFilter):
+    """Class for filtering by time"""
+    @classmethod
+    def get(cls, approach):
+        return approach.time.date()
 
 def create_filters(
         date=None, start_date=None, end_date=None,
@@ -108,8 +135,50 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+    # filters are represented by a list
+    filters_ca = []
+
+    if distance_max is not None:
+        filter_distance_max = FilDist(operator.le, distance_max)
+        filters_ca.append(filter_distance_max)
+
+    if distance_min is not None:
+        filter_distance_min = FilDist(operator.ge, distance_min)
+        filters_ca.append(filter_distance_min)
+
+    if velocity_min is not None:
+        filter_velocity_min = FilVel(operator.ge, velocity_min)
+        filters_ca.append(filter_velocity_min)
+
+    if velocity_max is not None:
+        filter_velocity_max = FilVel(operator.le, velocity_max)
+        filters_ca.append(filter_velocity_max)
+
+    if diameter_min is not None:
+        filter_diameter_min = FilDia(operator.ge, diameter_min)
+        filters_ca.append(filter_diameter_min)
+
+    if diameter_max is not None:
+        filter_diameter_max = FilDia(operator.le, diameter_max)
+        filters_ca.append(filter_diameter_max)
+
+    if hazardous is not None:
+        filter_hazardous = FilHaz(operator.eq, hazardous)
+        filters_ca.append(filter_hazardous)
+
+    if date is not None:
+        filter_date = FilTime(operator.eq, date)
+        filters_ca.append(filter_date)
+
+    if start_date is not None:
+        filter_start_date = FilTime(operator.ge, start_date)
+        filters_ca.append(filter_start_date)
+
+    if end_date is not None:
+        filter_end_date = FilTime(operator.le, end_date)
+        filters_ca.append(filter_end_date)
+
+    return filters_ca
 
 
 def limit(iterator, n=None):
@@ -121,5 +190,8 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    # Produce at most `n` values from the given iterator with the help of itertools.
+    if n == None or n == 0:
+        return iterator
+    else:
+        return itertools.islice(iterator,n)
